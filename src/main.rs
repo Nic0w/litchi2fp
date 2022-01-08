@@ -11,7 +11,7 @@ mod error;
 mod flightplan;
 mod litchi;
 
-/// Converts Litchi exports (KML, CSV) to Parrot's Flightplan's JSON format
+/// Converts Litchi Mission exports (KML, CSV) to Parrot FreeFlight's JSON format for the FlightPlan feature.
 #[derive(Parser, Debug)]
 #[clap(about, version, author = "Nic0w")]
 struct CommandLineInterface {

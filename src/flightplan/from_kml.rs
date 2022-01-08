@@ -25,7 +25,7 @@ impl<'a, 'm, 'f> TryFrom<&'f Mission<'m>> for FlightPlan<'f> {
         }
 
         let start = waypoints.first().ok_or(Error::MalformedLitchiMission("missing start point"))?;
-        
+
         let latitude = start.latitude;
         let longitude = start.longitude;
 
@@ -50,7 +50,7 @@ impl<'a, 'w> TryFrom<&'a Coord> for Waypoint {
         let yaw = 0f64;
         let last_yaw = yaw;
 
-        let speed = 5; //Default speed of 5m/s
+        let speed = super::DEFAULT_SPEED_MS;
 
         let poi = None;
         let follow = 0;
