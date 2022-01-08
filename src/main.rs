@@ -24,13 +24,13 @@ struct CommandLineInterface {
 enum Commands {
 
     /// To convert a KML file
-    ToKml {
+    FromKml {
         /// Input file
         file: Option<String>,
     },
 
     /// To convert a CSV file
-    ToCsv {
+    FromCsv {
         /// Input file
         file: Option<String>,
 
@@ -49,14 +49,14 @@ fn main() -> Result<(), Error> {
 
     let output: String = match &args.command {
 
-        ToKml { file: None, .. } | ToCsv { file: None, .. }  => {
+        FromKml { file: None, .. } | FromCsv { file: None, .. }  => {
 
             CommandLineInterface::into_app()
                 .error(ErrorKind::MissingRequiredArgument, "FILE is required")
                 .exit()
         }, 
 
-        ToCsv { file: Some(path) , title} => {
+        FromCsv { file: Some(path) , title} => {
 
             let path: &Path = Path::new(path);
 
@@ -82,7 +82,7 @@ fn main() -> Result<(), Error> {
             result.into()
         }
 
-        ToKml { file: Some(path) } => {
+        FromKml { file: Some(path) } => {
 
             let kml = KmlReader::<_, f64>::from_path(path)?.read()?;
 

@@ -1,6 +1,6 @@
   # DISCLAIMER
 
-  **`litchi2fp` OUTPUT HAS NOT YET BEEN TESTED WITH A LIVE DRONE. EVEN IF IT HAD BEEN, I AM IN NO WAY RESPONSIBLE FOR ANY DAMAGES DONE TO YOUR DRONE, OR DAMAGES CAUSED BY YOUR DRONE TO THINGS OR PEOPLE, WHEN USING A FLIGHT PLAN PRODUCED BY `litchi2fp` (See Sections 15, 16 of the LICENSE).**git
+  **`litchi2fp` OUTPUT HAS NOT YET BEEN TESTED WITH A LIVE DRONE. EVEN IF IT HAD BEEN, I AM IN NO WAY RESPONSIBLE FOR ANY DAMAGES DONE TO YOUR DRONE, OR DAMAGES CAUSED BY YOUR DRONE TO THINGS OR PEOPLE, WHEN USING A FLIGHT PLAN PRODUCED BY `litchi2fp` (See Sections 15, 16 of the LICENSE).**
 
 # Litchi Mission Converter
 
@@ -46,20 +46,20 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    help      Print this message or the help of the given subcommand(s)
-    to-csv    To convert a CSV file
-    to-kml    To convert a KML file
+    help        Print this message or the help of the given subcommand(s)
+    from-csv    To convert a CSV file
+    from-kml    To convert a KML file
 ```
 
 ## CSV to JSON
 
 ```bash
-$ ./litchi2fp to-csv --help
+$ ./litchi2fp from-csv --help
 litchi2fp-to-csv 
 To convert a CSV file
 
 USAGE:
-    litchi2fp to-csv [OPTIONS] [FILE]
+    litchi2fp from-csv [OPTIONS] [FILE]
 
 ARGS:
     <FILE>    Input file
@@ -72,12 +72,12 @@ OPTIONS:
 ## KML to JSON
 
 ```bash
-$ ./litchi2fp to-kml --help
-litchi2fp-to-kml 
+$ ./litchi2fp from-kml --help
+litchi2fp-from-kml 
 To convert a KML file
 
 USAGE:
-    litchi2fp to-kml [FILE]
+    litchi2fp from-kml [FILE]
 
 ARGS:
     <FILE>    Input file
