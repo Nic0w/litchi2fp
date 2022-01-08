@@ -1,3 +1,7 @@
+  # DISCLAIMER
+
+  **`litchi2fp` OUTPUT HAS NOT YET BEEN TESTED WITH A LIVE DRONE. EVEN IF IT HAD BEEN, I AM IN NO WAY RESPONSIBLE FOR ANY DAMAGES DONE TO YOUR DRONE, OR DAMAGES CAUSED BY YOUR DRONE TO THINGS OR PEOPLE, WHEN USING A FLIGHT PLAN PRODUCED BY `litchi2fp` (See Sections 15, 16 of the LICENSE).**git
+
 # Litchi Mission Converter
 
 While Parrot's FreeFlight application allows creation of flight plans to automate flights, it seemed easier from an user experience standpoint to be able to plan those automated flights from a device with a bigger screen and a mouse to point and click: a computer.
@@ -5,7 +9,6 @@ While Parrot's FreeFlight application allows creation of flight plans to automat
 The Litchi Mission Hub (https://flylitchi.com/hub) seemed appropriate enought to plan missions, however none of the export formats are compatible with Parrot's FreeFlight. Indeed, exports are either CSV or KML but FreeFlight use a specific JSON format. Thus a conversion tool was necessary: here comes `litchi2fp` !
 
 `litchi2fp` aims to convert CSV and KML exports from Litchi to FreeFlight's JSON format.
-
 
 ## KML conversion
 
@@ -26,7 +29,59 @@ CSV exports are way more suited for conversion as the information they provide a
 In particular, mission name and date of creation are missing and must be provided to `litchi2fp` (although current is used for date of creation and `litchi2fp` is able to use the file name as title for the mission).
 It is important to note that although action information is present in the CSV export, they do not exactly map 1:1 with FreeFlight's model. More tests are needed to understand the full range of differences, before devising solutions to compensate those.
 
+# Usage
 
-  # DISCLAIMER
+```bash
+$ ./litchi2fp --help
+litchi2fp 0.1.0
+Nic0w
+Converts Litchi Mission exports (KML, CSV) to Parrot FreeFlights JSON format for the FlightPlan
+feature
 
-  **`litchi2fp` OUTPUT HAS NOT YET BEEN TESTED WITH A LIVE DRONE. EVEN IF IT HAD BEEN, I AM IN NO WAY RESPONSIBLE FOR ANY DAMAGES DONE TO YOUR DRONE, OR DAMAGES CAUSED BY YOUR DRONE TO THINGS OR PEOPLE, WHEN USING A FLIGHT PLAN PRODUCED BY `litchi2fp` (See Sections 15, 16 of the LICENSE).**
+USAGE:
+    litchi2fp <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    help      Print this message or the help of the given subcommand(s)
+    to-csv    To convert a CSV file
+    to-kml    To convert a KML file
+```
+
+## CSV to JSON
+
+```bash
+$ ./litchi2fp to-csv --help
+litchi2fp-to-csv 
+To convert a CSV file
+
+USAGE:
+    litchi2fp to-csv [OPTIONS] [FILE]
+
+ARGS:
+    <FILE>    Input file
+
+OPTIONS:
+    -h, --help             Print help information
+    -t, --title <TITLE>    Mission name
+```
+
+## KML to JSON
+
+```bash
+$ ./litchi2fp to-kml --help
+litchi2fp-to-kml 
+To convert a KML file
+
+USAGE:
+    litchi2fp to-kml [FILE]
+
+ARGS:
+    <FILE>    Input file
+
+OPTIONS:
+    -h, --help    Print help information
+```
