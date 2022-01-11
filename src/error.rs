@@ -3,6 +3,7 @@ pub enum Error {
     InputOutput(std::io::Error),
     KmlParsingFailed(kml::Error),
     CsvParsingFailed(csv::Error),
+    MtpFailure(crate::mtp::MtpError),
     MalformedLitchiMission(&'static str),
     AltitudeOverflow(std::num::IntErrorKind),
     MissingTitle,
@@ -28,5 +29,11 @@ impl From<csv::Error> for Error {
 impl From<std::io::Error> for Error {
     fn from(underlying: std::io::Error) -> Self {
         Error::InputOutput(underlying)
+    }
+}
+
+impl From<crate::mtp::MtpError> for Error {
+    fn from(underlying: crate::mtp::MtpError) -> Self {
+        Error::MtpFailure(underlying)
     }
 }

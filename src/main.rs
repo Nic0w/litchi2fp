@@ -1,8 +1,9 @@
-use std::path::Path;
+use std::{path::Path, ops::Deref};
 use std::{ffi::OsStr, fs};
 
 use clap::{ Parser, Subcommand, IntoApp, ErrorKind };
 use kml::{ KmlReader};
+use libmtp_rs::{device::{raw::RawDevice, StorageSort}, storage::Parent};
 
 use crate::{error::Error, litchi::kml::Mission};
 use crate::litchi::csv::de::MissionRecord;
@@ -10,6 +11,7 @@ use crate::litchi::csv::de::MissionRecord;
 mod error;
 mod flightplan;
 mod litchi;
+mod mtp;
 
 /// Converts Litchi Mission exports (KML, CSV) to Parrot FreeFlight's JSON format for the FlightPlan feature.
 #[derive(Parser, Debug)]
@@ -37,7 +39,9 @@ enum Commands {
         /// Mission name
         #[clap(short, long)]
         title: Option<String>
-    }
+    },
+
+    Mtp
 
 }
 
@@ -92,6 +96,19 @@ fn main() -> Result<(), Error> {
 
             result.into()
         },
+
+        Mtp => {
+
+            let mut first_device = mtp::find_device(None)?;
+
+            let ff6_folder_id = mtp::find_freeflight6_folder(&mut first_device)?;
+
+            //println!("id: {}", ff6_folder_id);
+
+            format!("{:#?}", first_device.storage_pool().files_and_folders(Parent::Folder(ff6_folder_id)))
+
+            //String::default()
+        }
     };
 
     println!("{}", output);
