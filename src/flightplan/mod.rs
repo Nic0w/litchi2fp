@@ -15,32 +15,39 @@ use crate::{litchi::{csv::de::MissionRecord, kml::Mission}, error::Error};
 const DEFAULT_SPEED_MS: u8 = 5;
 const DEFAULT_WAYPOINT_ALTITUDE_M: u16 = 3;
 
-pub fn from_csv<'t>(title: &'t str, records: &'t [MissionRecord]) -> Result<FlightPlan<'t>, Error> {
+pub fn from_csv<'t, 'f>(title: &str, records: &'t [MissionRecord]) -> Result<FlightPlan<'f>, Error> {
 
     let mut res: Result<FlightPlan, Error> = records.try_into();
 
     if let Ok(flightplan) = res.as_mut() {
-        flightplan.title = title;
-        flightplan.uuid = title;
+        flightplan.title = title.to_owned();
+        flightplan.uuid = title.to_owned();
     }
 
     res
 }
 
-pub fn from_kml<'m>(mission: &'m Mission) -> Result<FlightPlan<'m>, Error> {
+pub fn from_kml<'m, 'f>(mission: &'m Mission) -> Result<FlightPlan<'f>, Error> {
     mission.try_into()
 }
 
-impl<'f> From<FlightPlan<'f>> for String {
+impl<'f> From<&'_ FlightPlan<'f>> for String {
 
-    fn from(flightplan: FlightPlan<'_>) -> Self {
+    fn from(flightplan: &FlightPlan<'_>) -> Self {
 
-        if let Ok(res) = serde_json::to_string_pretty(&flightplan) {
+        if let Ok(res) = serde_json::to_string_pretty(flightplan) {
             res
         }
         else {
             unreachable!()
         }
+    }
+}
+
+impl<'f> From<&'_ FlightPlan<'f>> for Vec<u8> {
+
+    fn from(flightplan: &FlightPlan<'_>) -> Self {
+        String::from(flightplan).into_bytes()
     }
 }
 
@@ -57,10 +64,11 @@ pub mod defaults {
 }
 
 impl<'f> FlightPlan<'f> {
-    fn new(title: &'f str, latitude: f64, longitude: f64) -> Self {
+    fn new(title: &str, latitude: f64, longitude: f64) -> Self {
         let now = Utc::now();
 
-        let uuid = title;
+        let title = title.to_owned();
+        let uuid = title.to_owned();
         let date = now.timestamp_millis() as u64;
 
         let takeoff = vec![defaults::_4K_30FPS_RECORDING];
