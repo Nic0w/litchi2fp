@@ -11,11 +11,11 @@ use crate::litchi::csv::de::Altitude;
 type PoiKey = (u64, u64);
 
 
-impl<'a, 'f> TryFrom<&'f [MissionRecord]> for FlightPlan<'f> {
+impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
 
     type Error = Error;
     
-    fn try_from(records: &'f [MissionRecord]) -> Result<Self, Self::Error> {
+    fn try_from(records: &'a [MissionRecord]) -> Result<Self, Self::Error> {
 
         let poi: HashSet<_> = records
             .iter()

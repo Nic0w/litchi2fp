@@ -9,10 +9,10 @@ use crate::{flightplan::model::Waypoint, litchi::kml::Mission};
 pub use super::model::FlightPlan;
 use super::Action;
 
-impl<'a, 'm, 'f> TryFrom<&'f Mission<'m>> for FlightPlan<'f> {
+impl<'m, 'f> TryFrom<&'_ Mission<'m>> for FlightPlan<'f> {
     type Error = crate::error::Error;
 
-    fn try_from(mission: &'f Mission) -> std::result::Result<Self, Self::Error> {
+    fn try_from(mission: &'_ Mission) -> std::result::Result<Self, Self::Error> {
         let mut poi = vec![];
 
         let waypoints: Result<Vec<_>> =
@@ -39,7 +39,7 @@ impl<'a, 'm, 'f> TryFrom<&'f Mission<'m>> for FlightPlan<'f> {
     }
 }
 
-impl<'a, 'w> TryFrom<&'a Coord> for Waypoint {
+impl<'a> TryFrom<&'a Coord> for Waypoint {
     type Error = crate::error::Error;
 
     fn try_from(coord: &'a Coord) -> std::result::Result<Self, Self::Error> {

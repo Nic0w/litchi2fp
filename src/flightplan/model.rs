@@ -3,13 +3,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FlightPlan<'f> {
     pub version: u8,
-    pub title: &'f str,
+    pub title: String,
     pub product: &'f str,
 
     #[serde(rename = "productId")]
     pub product_id: u16,
 
-    pub uuid: &'f str,
+    pub uuid: String,
     pub date: u64,
 
     pub progressive_course_activated: bool,
