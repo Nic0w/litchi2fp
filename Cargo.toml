@@ -19,6 +19,7 @@ libmtp-rs = "0.7.7"
 regex = "1.5.4"
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
+serde_repr = "0.1.8"
 
 [dev-dependencies]
 palette = "0.6.0"
