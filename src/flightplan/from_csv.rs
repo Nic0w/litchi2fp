@@ -1,10 +1,11 @@
 use std::collections::HashSet;
 
 use crate::{
-    litchi::csv::de::{Coordinates, MissionRecord}, error::Error,
+    error::Error,
+    litchi::csv::de::{Coordinates, MissionRecord},
 };
 
-use super::{Waypoint, Action, FlightPlan, PointOfInterest};
+use super::{Action, FlightPlan, PointOfInterest, Waypoint};
 
 use crate::litchi::csv::de::Altitude;
 
@@ -12,13 +13,10 @@ use crate::litchi::Action as LitchiAction;
 
 type PoiKey = (u64, u64);
 
-
 impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
-
     type Error = Error;
-    
-    fn try_from(records: &'a [MissionRecord]) -> Result<Self, Self::Error> {
 
+    fn try_from(records: &'a [MissionRecord]) -> Result<Self, Self::Error> {
         let poi: HashSet<_> = records
             .iter()
             .filter_map(Option::<PointOfInterest>::from)
@@ -59,7 +57,9 @@ impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
             last.actions = Some(vec![Action::VideoStopCapture]);
         }
 
-        let start = waypoints.first().ok_or(Error::MalformedLitchiMission("missing start point"))?;
+        let start = waypoints
+            .first()
+            .ok_or(Error::MalformedLitchiMission("missing start point"))?;
 
         let latitude = start.latitude;
         let longitude = start.longitude;
@@ -118,17 +118,17 @@ impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
         use Altitude::*;
         use LitchiAction::*;
 
-        let actions: Vec<Action> = rec
-            .actions
-            .iter()
-            .map(Action::from)
-            .collect();
+        let actions: Vec<Action> = rec.actions.iter().map(Action::from).collect();
 
-        let actions = if actions.is_empty() { None } else { Some(actions) };
+        let actions = if actions.is_empty() {
+            None
+        } else {
+            Some(actions)
+        };
 
         let speed = match rec.speed.floor() as u8 {
             0 => super::DEFAULT_SPEED_MS,
-            x => x
+            x => x,
         };
 
         Waypoint {
@@ -149,7 +149,6 @@ impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
     }
 }
 
-
 mod tests {
 
     #[test]
@@ -158,6 +157,6 @@ mod tests {
 
         let b = a as u8;
 
-        println!("{}, {}", a , b);
+        println!("{}, {}", a, b);
     }
 }

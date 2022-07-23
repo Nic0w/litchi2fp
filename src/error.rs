@@ -10,7 +10,7 @@ pub enum Error {
     MalformedLitchiMission(&'static str),
     AltitudeOverflow(std::num::IntErrorKind),
     MissingTitle,
-    InvalidFileName
+    InvalidFileName,
 }
 
 impl From<kml::Error> for Error {

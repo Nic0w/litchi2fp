@@ -1,35 +1,39 @@
 use crate::litchi::bin::{LitchiMission, PointOfInterest, Waypoint};
 
-use super::{FlightPlan, Action};
+use super::{Action, FlightPlan};
 
 impl<'m, 'f> TryFrom<&'_ LitchiMission> for FlightPlan<'f> {
     type Error = crate::error::Error;
 
     fn try_from(mission: &'_ LitchiMission) -> Result<Self, Self::Error> {
-
         let mut waypoints = <Vec<super::Waypoint>>::from(mission);
 
         let color_roll = super::POI_COLORS.iter().cycle();
 
-        let mut poi = mission.poi.iter().map(super::PointOfInterest::from)
+        let mut poi = mission
+            .poi
+            .iter()
+            .map(super::PointOfInterest::from)
             .scan(color_roll, |picker, mut poi| {
                 if let Some(color) = picker.next() {
                     poi.color = *color;
                 }
 
                 Some(poi)
-        }).collect();
+            })
+            .collect();
 
         if let Some(last) = waypoints.last_mut() {
-            if let Some(actions ) = last.actions.as_mut() {
+            if let Some(actions) = last.actions.as_mut() {
                 actions.push(Action::VideoStopCapture);
-            }
-            else {
+            } else {
                 last.actions = Some(vec![Action::VideoStopCapture]);
             }
         }
 
-        let start = waypoints.first().ok_or(Self::Error::MalformedLitchiMission("missing start point"))?;
+        let start = waypoints
+            .first()
+            .ok_or(Self::Error::MalformedLitchiMission("missing start point"))?;
 
         let latitude = start.latitude;
         let longitude = start.longitude;
@@ -41,14 +45,15 @@ impl<'m, 'f> TryFrom<&'_ LitchiMission> for FlightPlan<'f> {
         flightplan.plan.waypoints.append(&mut waypoints);
 
         Ok(flightplan)
-
     }
 }
 
 impl From<&'_ LitchiMission> for Vec<super::Waypoint> {
     fn from(mission: &'_ LitchiMission) -> Self {
-        mission.waypoints.iter().map(|w| {
-            super::Waypoint {
+        mission
+            .waypoints
+            .iter()
+            .map(|w| super::Waypoint {
                 latitude: w.latitude,
                 longitude: w.longitude,
                 altitude: w.altitude as u16,
@@ -61,8 +66,8 @@ impl From<&'_ LitchiMission> for Vec<super::Waypoint> {
                 last_yaw: 0f64,
                 actions: (!w.actions.is_empty())
                     .then(|| w.actions.iter().map(Action::from).collect()),
-            }
-        }).collect()
+            })
+            .collect()
     }
 }
 

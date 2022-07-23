@@ -1,7 +1,10 @@
 use std::path::Path;
 
-use serde::{Deserialize, de::{Visitor, self}};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde::{
+    de::{self, Visitor},
+    Deserialize,
+};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use deserializer::Deserializer;
 
@@ -10,8 +13,8 @@ pub use self::waypoint::Waypoint;
 pub use error::Error;
 
 mod deserializer;
-mod waypoint;
 mod error;
+mod waypoint;
 
 const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
@@ -22,14 +25,14 @@ pub enum FinishAction {
     ReturnToHome = 1,
     Land = 2,
     BackToFirst = 3,
-    Reverse = 4
+    Reverse = 4,
 }
 
 #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[repr(u32)]
 pub enum PathMode {
     StraigtLines = 0,
-    CurvedTurns = 1
+    CurvedTurns = 1,
 }
 
 #[derive(Deserialize, Debug)]
@@ -42,31 +45,29 @@ pub struct PointOfInterest {
 
 #[derive(Deserialize, Debug)]
 pub struct LitchiMission {
-
     _unknown: u32,
     pub finish_action: FinishAction,
     pub path_mode: PathMode,
     pub cruising_speed: f32,
     pub max_speed: f32,
 
-    _b : [u32; 4], 
-    
+    _b: [u32; 4],
+
     pub waypoints: Vec<Waypoint>,
-    pub poi: Vec<PointOfInterest>
+    pub poi: Vec<PointOfInterest>,
 }
 
 pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
-
     let mut deserializer = Deserializer::from_slice(&bytes);
 
     let maybe_magic = deserializer.parse_u32();
 
     /*(MAGIC == maybe_magic)
-        .then(||())
-        .ok_or(Error::BadMagic)?;*/
+    .then(||())
+    .ok_or(Error::BadMagic)?;*/
 
     if MAGIC != maybe_magic {
-        return Err(Error::BadMagic)
+        return Err(Error::BadMagic);
     }
 
     let mission = LitchiMission::deserialize(&mut deserializer);
@@ -74,7 +75,4 @@ pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
     mission
 }
 
-pub fn from_path<P: AsRef<Path>>(path: P) {
-
-    
-}
+pub fn from_path<P: AsRef<Path>>(path: P) {}

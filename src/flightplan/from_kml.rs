@@ -24,7 +24,9 @@ impl<'m, 'f> TryFrom<&'_ Mission<'m>> for FlightPlan<'f> {
             last.actions = Some(vec![Action::VideoStopCapture]);
         }
 
-        let start = waypoints.first().ok_or(Error::MalformedLitchiMission("missing start point"))?;
+        let start = waypoints
+            .first()
+            .ok_or(Error::MalformedLitchiMission("missing start point"))?;
 
         let latitude = start.latitude;
         let longitude = start.longitude;

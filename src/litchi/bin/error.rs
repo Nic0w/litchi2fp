@@ -6,8 +6,7 @@ use serde::de;
 pub enum Error {
     UnsupportedValue,
     BadMagic,
-    Custom(String)
-    
+    Custom(String),
 }
 
 impl Display for Error {
@@ -23,7 +22,10 @@ impl Display for Error {
 impl std::error::Error for Error {}
 
 impl de::Error for Error {
-    fn custom<T>(msg:T) -> Self where T:Display {
+    fn custom<T>(msg: T) -> Self
+    where
+        T: Display,
+    {
         Error::Custom(msg.to_string())
     }
 }

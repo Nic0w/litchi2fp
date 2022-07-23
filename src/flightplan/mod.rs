@@ -3,23 +3,28 @@ use std::hash::Hash;
 use chrono::prelude::*;
 
 mod color;
+mod from_bin;
 mod from_csv;
 mod from_kml;
-mod from_bin;
 mod model;
 
-pub use model::*;
 pub use color::POI_COLORS;
+pub use model::*;
 
-use crate::{litchi::{csv::de::MissionRecord, kml, bin}, error::Error};
+use crate::{
+    error::Error,
+    litchi::{bin, csv::de::MissionRecord, kml},
+};
 
 use crate::litchi::Action as LitchiAction;
 
 const DEFAULT_SPEED_MS: u8 = 5;
 const DEFAULT_WAYPOINT_ALTITUDE_M: u16 = 3;
 
-pub fn from_csv<'t, 'f>(title: &str, records: &'t [MissionRecord]) -> Result<FlightPlan<'f>, Error> {
-
+pub fn from_csv<'t, 'f>(
+    title: &str,
+    records: &'t [MissionRecord],
+) -> Result<FlightPlan<'f>, Error> {
     let mut res: Result<FlightPlan, Error> = records.try_into();
 
     if let Ok(flightplan) = res.as_mut() {
@@ -34,8 +39,10 @@ pub fn from_kml<'m, 'f>(mission: &'m kml::Mission) -> Result<FlightPlan<'f>, Err
     mission.try_into()
 }
 
-pub fn from_bin<'m, 'f>(title: &str, mission: &'m bin::LitchiMission) -> Result<FlightPlan<'f>, Error> {
-    
+pub fn from_bin<'m, 'f>(
+    title: &str,
+    mission: &'m bin::LitchiMission,
+) -> Result<FlightPlan<'f>, Error> {
     let mut res: Result<FlightPlan, Error> = mission.try_into();
 
     if let Ok(flightplan) = res.as_mut() {
@@ -47,25 +54,20 @@ pub fn from_bin<'m, 'f>(title: &str, mission: &'m bin::LitchiMission) -> Result<
 }
 
 impl<'f> From<&'_ FlightPlan<'f>> for String {
-
     fn from(flightplan: &FlightPlan<'_>) -> Self {
-
         if let Ok(res) = serde_json::to_string_pretty(flightplan) {
             res
-        }
-        else {
+        } else {
             unreachable!()
         }
     }
 }
 
 impl<'f> From<&'_ FlightPlan<'f>> for Vec<u8> {
-
     fn from(flightplan: &FlightPlan<'_>) -> Self {
         String::from(flightplan).into_bytes()
     }
 }
-
 
 pub mod defaults {
 
@@ -147,7 +149,6 @@ impl Hash for PointOfInterest {
 
 impl From<&'_ LitchiAction> for Action {
     fn from(action: &'_ LitchiAction) -> Self {
-
         use LitchiAction::*;
 
         match action {
@@ -171,7 +172,7 @@ impl From<&'_ LitchiAction> for Action {
             TiltCamera { angle } => Action::Tilt {
                 angle: *angle as i8,
                 speed: 10,
-            }
+            },
         }
     }
 }

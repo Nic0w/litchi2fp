@@ -1,6 +1,6 @@
 use crate::litchi::Action;
 
-use super::{ Altitude, Coordinates, GimbalSettings};
+use super::{Altitude, Coordinates, GimbalSettings};
 
 #[derive(Debug)]
 pub struct ActionHelper {
