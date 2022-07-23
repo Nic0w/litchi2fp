@@ -1,13 +1,16 @@
+use crate::litchi;
+
 #[derive(Debug)]
 pub enum Error {
     InputOutput(std::io::Error),
     KmlParsingFailed(kml::Error),
     CsvParsingFailed(csv::Error),
+    BinParsingFailed(litchi::bin::Error),
     MtpFailure(crate::mtp::MtpError),
     MalformedLitchiMission(&'static str),
     AltitudeOverflow(std::num::IntErrorKind),
     MissingTitle,
-    InvalidFileName
+    InvalidFileName,
 }
 
 impl From<kml::Error> for Error {
@@ -35,5 +38,11 @@ impl From<std::io::Error> for Error {
 impl From<crate::mtp::MtpError> for Error {
     fn from(underlying: crate::mtp::MtpError) -> Self {
         Error::MtpFailure(underlying)
+    }
+}
+
+impl From<litchi::bin::Error> for Error {
+    fn from(underlying: litchi::bin::Error) -> Self {
+        Error::BinParsingFailed(underlying)
     }
 }

@@ -1,6 +1,6 @@
 use kml::{
     types::{Element, Geometry, LineString, Placemark, Point},
-    Kml, 
+    Kml,
 };
 
 use crate::error::Error;

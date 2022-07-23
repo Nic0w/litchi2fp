@@ -1,22 +1,22 @@
 use std::collections::HashSet;
 
 use crate::{
-    litchi::csv::de::{Coordinates, MissionRecord}, error::Error,
+    error::Error,
+    litchi::csv::de::{Coordinates, MissionRecord},
 };
 
-use super::{Waypoint, Action, FlightPlan, PointOfInterest};
+use super::{Action, FlightPlan, PointOfInterest, Waypoint};
 
 use crate::litchi::csv::de::Altitude;
 
+use crate::litchi::Action as LitchiAction;
+
 type PoiKey = (u64, u64);
 
-
 impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
-
     type Error = Error;
-    
-    fn try_from(records: &'a [MissionRecord]) -> Result<Self, Self::Error> {
 
+    fn try_from(records: &'a [MissionRecord]) -> Result<Self, Self::Error> {
         let poi: HashSet<_> = records
             .iter()
             .filter_map(Option::<PointOfInterest>::from)
@@ -57,7 +57,9 @@ impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
             last.actions = Some(vec![Action::VideoStopCapture]);
         }
 
-        let start = waypoints.first().ok_or(Error::MalformedLitchiMission("missing start point"))?;
+        let start = waypoints
+            .first()
+            .ok_or(Error::MalformedLitchiMission("missing start point"))?;
 
         let latitude = start.latitude;
         let longitude = start.longitude;
@@ -113,43 +115,20 @@ impl<'a> From<&'a MissionRecord> for Option<PointOfInterest> {
 
 impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
     fn from(rec: &'a MissionRecord) -> Self {
-        use crate::litchi::csv::Action as RecordAction;
         use Altitude::*;
-        use RecordAction::*;
+        use LitchiAction::*;
 
-        let actions: Vec<Action> = rec
-            .actions
-            .iter()
-            .map(|action| match action {
-                StayFor { ms } => Action::Delay { delay: ms / 1000 },
+        let actions: Vec<Action> = rec.actions.iter().map(Action::from).collect();
 
-                TakePhoto => Action::ImageStartCapture {
-                    period: 0,
-                    resolution: 14.0,
-                    nb_of_pictures: 1,
-                },
-
-                StartRecording => super::defaults::_4K_30FPS_RECORDING,
-
-                StopRecording => Action::VideoStopCapture,
-
-                RotateAircraft { angle } => Action::Panorama {
-                    angle: *angle as i8,
-                    speed: 10,
-                },
-
-                TiltCamera { angle } => Action::Tilt {
-                    angle: *angle as i8,
-                    speed: 10,
-                },
-            })
-            .collect();
-
-        let actions = if actions.is_empty() { None } else { Some(actions) };
+        let actions = if actions.is_empty() {
+            None
+        } else {
+            Some(actions)
+        };
 
         let speed = match rec.speed.floor() as u8 {
             0 => super::DEFAULT_SPEED_MS,
-            x => x
+            x => x,
         };
 
         Waypoint {
@@ -170,7 +149,6 @@ impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
     }
 }
 
-
 mod tests {
 
     #[test]
@@ -179,6 +157,6 @@ mod tests {
 
         let b = a as u8;
 
-        println!("{}, {}", a , b);
+        println!("{}, {}", a, b);
     }
 }

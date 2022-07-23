@@ -4,11 +4,11 @@ use serde::{
     Deserialize,
 };
 
-use crate::litchi::csv::de::helpers::CoordinatesHelper;
+use crate::litchi::{csv::de::helpers::CoordinatesHelper, Action};
 
 use super::{
     helpers::{ActionHelper, GimbalModeHelper},
-    Action, MissionRecord,
+    MissionRecord,
 };
 
 const FIELDS: &[&str] = &[
