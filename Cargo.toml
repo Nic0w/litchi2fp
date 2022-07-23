@@ -1,6 +1,6 @@
 [package]
 name = "litchi2fp"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,18 +8,18 @@ edition = "2021"
 [profile.release]
 lto = true
 codegen-units = 1
+strip = true
 
 [dependencies]
 chrono = "0.4.19"
-clap = { version = "3.0.5", features = ["derive"] }
+clap = { version = "3.2.14", features = ["derive"] }
 csv = "1.1.6"
-google_maps = { version = "2.1.4", features = ["elevation", "enable-reqwest", "rustls", "brotli"], default-features = false }
-kml = "0.4.0"
+kml = "0.4.3"
 libmtp-rs = "0.7.7"
-regex = "1.5.4"
-serde = { version = "1.0.132", features = ["derive"] }
-serde_json = "1.0.73"
+regex = "1.6.0"
+serde = { version = "1.0.140", features = ["derive"] }
+serde_json = "1.0.82"
 serde_repr = "0.1.8"
 
 [dev-dependencies]
-palette = "0.6.0"
+palette = "0.6.1"
