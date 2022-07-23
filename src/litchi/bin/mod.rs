@@ -7,8 +7,11 @@ use deserializer::Deserializer;
 
 pub use self::waypoint::Waypoint;
 
+pub use error::Error;
+
 mod deserializer;
 mod waypoint;
+mod error;
 
 const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
@@ -52,21 +55,23 @@ pub struct LitchiMission {
     pub poi: Vec<PointOfInterest>
 }
 
-pub fn from_slice(bytes: &[u8]) -> LitchiMission {
+pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
 
     let mut deserializer = Deserializer::from_slice(&bytes);
 
     let maybe_magic = deserializer.parse_u32();
 
-    if MAGIC != maybe_magic {
-        //return Err(BadMagic)
-    }
+    /*(MAGIC == maybe_magic)
+        .then(||())
+        .ok_or(Error::BadMagic)?;*/
 
-    println!("{} {}", MAGIC, maybe_magic);
+    if MAGIC != maybe_magic {
+        return Err(Error::BadMagic)
+    }
 
     let mission = LitchiMission::deserialize(&mut deserializer);
 
-    mission.unwrap()
+    mission
 }
 
 pub fn from_path<P: AsRef<Path>>(path: P) {

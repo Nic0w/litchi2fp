@@ -2,6 +2,8 @@ use std::fmt::Display;
 
 use serde::{de::{self, Visitor, SeqAccess}, forward_to_deserialize_any};
 
+use super::error::Error;
+
 pub struct Deserializer<'de> {
     input: &'de [u8]
 }
@@ -49,30 +51,6 @@ impl<'de> Deserializer<'de> {
 
 }
 
-#[derive(Debug)]
-pub struct Error {}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "lol no: ")
-    }
-}
-
-impl std::error::Error for Error {
-
-}
-
-impl de::Error for Error {
-    fn custom<T>(msg:T) -> Self where T:Display {
-
-        println!("{}", msg);
-
-        Error {}
-
-        //todo!()
-    }
-}
-
 impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
 
     forward_to_deserialize_any! {
@@ -87,7 +65,8 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de> {
-        todo!()
+            
+        Err(Error::UnsupportedValue)
     }
 
     fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>

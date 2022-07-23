@@ -141,7 +141,7 @@ fn from_bin<'f, P: AsRef<Path> + 'f>(path: &'f P, title: Option<&str>) -> Result
 
     file.read_to_end(&mut data)?;
 
-    let mission = &litchi::bin::from_slice(&data);
+    let mission = &litchi::bin::from_slice(&data)?;
 
     flightplan::from_bin(title, mission)
 }
