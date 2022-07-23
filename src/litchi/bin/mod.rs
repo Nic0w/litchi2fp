@@ -5,7 +5,7 @@ use serde_repr::{Serialize_repr, Deserialize_repr};
 
 use deserializer::Deserializer;
 
-use self::waypoint::Waypoint;
+pub use self::waypoint::Waypoint;
 
 mod deserializer;
 mod waypoint;
@@ -14,7 +14,7 @@ const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
 #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[repr(u32)]
-enum FinishAction {
+pub enum FinishAction {
     None = 0,
     ReturnToHome = 1,
     Land = 2,
@@ -24,32 +24,32 @@ enum FinishAction {
 
 #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[repr(u32)]
-enum PathMode {
+pub enum PathMode {
     StraigtLines = 0,
     CurvedTurns = 1
 }
 
 #[derive(Deserialize, Debug)]
-struct PointOfInterest {
-    latitude: f64,
-    longitude: f64,
+pub struct PointOfInterest {
+    pub latitude: f64,
+    pub longitude: f64,
 
-    altitude: f32,
+    pub altitude: f32,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct LitchiMission {
 
-    plop: u32,
-    finish_action: FinishAction,
-    path_mode: PathMode,
-    cruising_speed: f32,
-    max_speed: f32,
+    _unknown: u32,
+    pub finish_action: FinishAction,
+    pub path_mode: PathMode,
+    pub cruising_speed: f32,
+    pub max_speed: f32,
 
     _b : [u32; 4], 
     
-    waypoints: Vec<Waypoint>,
-    poi: Vec<PointOfInterest>
+    pub waypoints: Vec<Waypoint>,
+    pub poi: Vec<PointOfInterest>
 }
 
 pub fn from_slice(bytes: &[u8]) -> LitchiMission {

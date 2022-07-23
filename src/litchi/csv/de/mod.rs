@@ -1,3 +1,4 @@
+use crate::litchi::Action;
 
 mod helpers;
 mod deserializer;
@@ -43,13 +44,5 @@ pub enum Altitude {
     Absolute(u16)
 }
 
-#[derive(Debug)]
-pub enum Action {
-    StayFor { ms: usize },
-    TakePhoto,
-    StartRecording,
-    StopRecording,
-    RotateAircraft { angle: u16 },
-    TiltCamera { angle: i16 },
-}
+
 

@@ -5,12 +5,15 @@ use chrono::prelude::*;
 mod color;
 mod from_csv;
 mod from_kml;
+mod from_bin;
 mod model;
 
 pub use model::*;
 pub use color::POI_COLORS;
 
-use crate::{litchi::{csv::de::MissionRecord, kml::Mission}, error::Error};
+use crate::{litchi::{csv::de::MissionRecord, kml, bin}, error::Error};
+
+use crate::litchi::Action as LitchiAction;
 
 const DEFAULT_SPEED_MS: u8 = 5;
 const DEFAULT_WAYPOINT_ALTITUDE_M: u16 = 3;
@@ -27,8 +30,20 @@ pub fn from_csv<'t, 'f>(title: &str, records: &'t [MissionRecord]) -> Result<Fli
     res
 }
 
-pub fn from_kml<'m, 'f>(mission: &'m Mission) -> Result<FlightPlan<'f>, Error> {
+pub fn from_kml<'m, 'f>(mission: &'m kml::Mission) -> Result<FlightPlan<'f>, Error> {
     mission.try_into()
+}
+
+pub fn from_bin<'m, 'f>(title: &str, mission: &'m bin::LitchiMission) -> Result<FlightPlan<'f>, Error> {
+    
+    let mut res: Result<FlightPlan, Error> = mission.try_into();
+
+    if let Ok(flightplan) = res.as_mut() {
+        flightplan.title = title.to_owned();
+        flightplan.uuid = title.to_owned();
+    }
+
+    res
 }
 
 impl<'f> From<&'_ FlightPlan<'f>> for String {
@@ -127,5 +142,36 @@ impl Hash for PointOfInterest {
 
         self.altitude.hash(state);
         self.color.hash(state);
+    }
+}
+
+impl From<&'_ LitchiAction> for Action {
+    fn from(action: &'_ LitchiAction) -> Self {
+
+        use LitchiAction::*;
+
+        match action {
+            StayFor { ms } => Action::Delay { delay: ms / 1000 },
+
+            TakePhoto => Action::ImageStartCapture {
+                period: 0,
+                resolution: 14.0,
+                nb_of_pictures: 1,
+            },
+
+            StartRecording => crate::flightplan::defaults::_4K_30FPS_RECORDING,
+
+            StopRecording => Action::VideoStopCapture,
+
+            RotateAircraft { angle } => Action::Panorama {
+                angle: *angle as i8,
+                speed: 10,
+            },
+
+            TiltCamera { angle } => Action::Tilt {
+                angle: *angle as i8,
+                speed: 10,
+            }
+        }
     }
 }

@@ -8,6 +8,8 @@ use super::{Waypoint, Action, FlightPlan, PointOfInterest};
 
 use crate::litchi::csv::de::Altitude;
 
+use crate::litchi::Action as LitchiAction;
+
 type PoiKey = (u64, u64);
 
 
@@ -113,36 +115,13 @@ impl<'a> From<&'a MissionRecord> for Option<PointOfInterest> {
 
 impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
     fn from(rec: &'a MissionRecord) -> Self {
-        use crate::litchi::csv::Action as RecordAction;
         use Altitude::*;
-        use RecordAction::*;
+        use LitchiAction::*;
 
         let actions: Vec<Action> = rec
             .actions
             .iter()
-            .map(|action| match action {
-                StayFor { ms } => Action::Delay { delay: ms / 1000 },
-
-                TakePhoto => Action::ImageStartCapture {
-                    period: 0,
-                    resolution: 14.0,
-                    nb_of_pictures: 1,
-                },
-
-                StartRecording => super::defaults::_4K_30FPS_RECORDING,
-
-                StopRecording => Action::VideoStopCapture,
-
-                RotateAircraft { angle } => Action::Panorama {
-                    angle: *angle as i8,
-                    speed: 10,
-                },
-
-                TiltCamera { angle } => Action::Tilt {
-                    angle: *angle as i8,
-                    speed: 10,
-                },
-            })
+            .map(Action::from)
             .collect();
 
         let actions = if actions.is_empty() { None } else { Some(actions) };

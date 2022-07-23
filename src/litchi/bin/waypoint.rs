@@ -1,25 +1,17 @@
 use serde::{de::{Visitor, self}, Deserialize};
 
+use crate::litchi::Action;
+
 #[derive(Debug)]
 pub struct Waypoint {
-    altitude: f32,
-    heading: f32,
-    latitude: f64,
-    longitude: f64,
+    pub altitude: f32,
+    pub heading: f32,
+    pub latitude: f64,
+    pub longitude: f64,
     curve_size: f32,
-    gimbal_pitch: i32,
+    pub gimbal_pitch: i32,
 
-    actions: Vec<Action>
-}
-
-#[derive(Debug)]
-pub enum Action {
-    StayFor(u32),
-    TakePhoto,
-    StartRecording,
-    StopRecording,
-    RotateAircraft(f32),
-    TitltCamera(f32)
+    pub actions: Vec<Action>
 }
 
 #[derive(Deserialize, Debug)]
@@ -62,12 +54,12 @@ impl<'de> Visitor<'de> for WaypointVisitor {
 
                 let action = match action {
 
-                    (0, ms) => Action::StayFor(ms),
+                    (0, ms) => Action::StayFor { ms: ms as usize },
                     (1, _) => Action::TakePhoto,
                     (2, _) => Action::StartRecording,
                     (3, _) => Action::StopRecording,
-                    (4, angle) => Action::RotateAircraft(f32::from_bits(angle)),
-                    (5, angle) => Action::TitltCamera(f32::from_bits(angle)),
+                    (4, angle) => Action::RotateAircraft { angle: angle as u16 },
+                    (5, angle) => Action::TiltCamera { angle: angle as i16 },
 
                     (code, value) => { panic!("Unknown action with code {} and value: {}", code, value) }
                 };
