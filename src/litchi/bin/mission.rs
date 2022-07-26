@@ -2,8 +2,6 @@ use serde::{Deserialize, de::{Visitor, self}};
 
 use super::{PointOfInterest, FinishAction, PathMode, waypoint::Waypoint, WaypointPartial, PhotoInterval};
 
-
-
 #[derive(Debug)]
 pub struct LitchiMission {
 
@@ -96,7 +94,7 @@ impl<'de> Visitor<'de> for MissionVisitor {
                     ok_or_else(|| de::Error::invalid_length(i as usize, &"more poi details"))?;
             }
 
-            let other_settings: OtherSettings = seq.next_element()?
+            let _other_settings: OtherSettings = seq.next_element()?
                 .ok_or_else(|| de::Error::missing_field("other settings"))?;
 
             let mut wp_intervals = Vec::with_capacity(nb_waypoints);
@@ -112,18 +110,9 @@ impl<'de> Visitor<'de> for MissionVisitor {
             let waypoints = mission_part.waypoints.into_iter()
                 .zip(wp_details.iter())
                 .zip(wp_intervals.into_iter())
-                .map(|((waypoint, details), (time_interval, dist_interval))| {
+                .map(|((waypoint, details), intervals)| {
 
-                    let interval = 
-                        if time_interval != -1.0 {
-                            Some(PhotoInterval::Time { seconds: time_interval })
-                        } 
-                        else if dist_interval != -1.0 {
-                            Some(PhotoInterval::Distance { meters: dist_interval })
-                        }
-                        else {
-                            None
-                        };
+                    let interval = PhotoInterval::from_tuple(intervals);
 
                     let poi = (details.waypoint_poi != 0xFFFFFFFF).then(|| details.waypoint_poi);
 
@@ -159,5 +148,20 @@ impl<'de> Deserialize<'de> for LitchiMission {
         D: serde::Deserializer<'de> {
     
         deserializer.deserialize_tuple(usize::MAX, MissionVisitor)
+    }
+}
+
+impl PhotoInterval {
+    fn from_tuple((time_interval, dist_interval): (f32, f32)) -> Option<Self> {
+
+        if time_interval != -1.0 {
+            Some(PhotoInterval::Time { seconds: time_interval })
+        } 
+        else if dist_interval != -1.0 {
+            Some(PhotoInterval::Distance { meters: dist_interval })
+        }
+        else {
+            None
+        }
     }
 }
