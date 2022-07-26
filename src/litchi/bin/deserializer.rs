@@ -18,6 +18,17 @@ impl<'de> Deserializer<'de> {
 }
 
 impl<'de> Deserializer<'de> {
+
+    fn parse_u16(&mut self) -> u16 {
+        let (bytes, remaining) = self.input.split_at(core::mem::size_of::<u16>());
+    
+        let value = u16::from_be_bytes(bytes.try_into().unwrap());
+    
+        self.input = remaining;
+
+        value
+    }
+
     pub fn parse_u32(&mut self) -> u32 {
         let (bytes, remaining) = self.input.split_at(core::mem::size_of::<u32>());
 
@@ -51,7 +62,7 @@ impl<'de> Deserializer<'de> {
 
 impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     forward_to_deserialize_any! {
-        bool i8 i16 i64 i128 u8 u16 u64 u128
+        bool i8 i16 i64 i128 u8 u64 u128
         char str string
         bytes byte_buf option unit unit_struct newtype_struct
         tuple_struct map enum identifier ignored_any
@@ -64,6 +75,13 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
         V: de::Visitor<'de>,
     {
         Err(Error::UnsupportedValue)
+    }
+
+    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+        where
+            V: Visitor<'de> {
+
+        visitor.visit_u16(self.parse_u16())
     }
 
     fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
