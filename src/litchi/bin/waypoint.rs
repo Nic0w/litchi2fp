@@ -3,7 +3,7 @@ use serde::{
     Deserialize,
 };
 
-use crate::litchi::Action;
+use crate::litchi::{Action, csv::GimbalSettings};
 
 use super::PhotoInterval;
 
@@ -17,8 +17,7 @@ struct WaypointRaw {
     latitude: f64,
     longitude: f64,
     curve_size: f32,
-    _u32_4: u32,
-    gimbal_pitch: i32,
+    gimbal_settings: (u32, i32),
     nb_actions: u32,
     __trash: u32,
 }
@@ -30,7 +29,8 @@ pub struct WaypointPartial {
     pub latitude: f64,
     pub longitude: f64,
     pub curve_size: f32,
-    pub gimbal_pitch: i32,
+
+    pub gimbal: Option<GimbalSettings>,
 
     pub actions: Vec<Action>,
 }
@@ -43,7 +43,7 @@ impl WaypointPartial {
             latitude: raw.latitude,
             longitude: raw.longitude,
             curve_size: raw.curve_size,
-            gimbal_pitch: raw.gimbal_pitch,
+            gimbal: GimbalSettings::from_tuple(raw.gimbal_settings),
             actions,
         }
     }
@@ -56,13 +56,27 @@ pub struct Waypoint {
     pub latitude: f64,
     pub longitude: f64,
     pub curve_size: f32,
-    pub gimbal_pitch: i32,
+    pub gimbal: Option<GimbalSettings>,
 
     pub poi: Option<u32>,
 
     pub interval: Option<PhotoInterval>,
 
     pub actions: Vec<Action>
+}
+
+impl GimbalSettings {
+    fn from_tuple((mode, angle): (u32, i32)) -> Option<Self> {
+        match mode {
+            0x0 => None,
+
+            0x1 => Some(GimbalSettings::FocusPoi(angle as f64)), 
+
+            0x2 => Some(GimbalSettings::Interpolate(angle as f64)), 
+
+            _ => panic!("unknown gimbal settings")
+        }
+    }
 }
 
 struct WaypointVisitor;

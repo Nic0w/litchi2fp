@@ -122,7 +122,7 @@ impl<'de> Visitor<'de> for MissionVisitor {
                         latitude: waypoint.latitude,
                         longitude: waypoint.longitude,
                         curve_size: waypoint.curve_size,
-                        gimbal_pitch: waypoint.gimbal_pitch,
+                        gimbal: waypoint.gimbal,
                         poi,
                         interval,
                         actions: waypoint.actions,
