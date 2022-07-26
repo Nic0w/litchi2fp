@@ -35,6 +35,20 @@ pub struct WaypointPartial {
     pub actions: Vec<Action>,
 }
 
+impl WaypointPartial {
+    fn from_raw(raw: WaypointRaw, actions: Vec<Action>) -> Self {
+        WaypointPartial {
+            altitude: raw.altitude,
+            heading: raw.heading,
+            latitude: raw.latitude,
+            longitude: raw.longitude,
+            curve_size: raw.curve_size,
+            gimbal_pitch: raw.gimbal_pitch,
+            actions,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Waypoint {
     pub altitude: f32,
@@ -70,41 +84,16 @@ impl<'de> Visitor<'de> for WaypointVisitor {
         let mut actions = Vec::with_capacity(wp_raw.nb_actions as usize);
 
         for i in 0..wp_raw.nb_actions {
-            let action: (u32, u32) = seq
+            let action_tuple: (u32, u32) = seq
                 .next_element()?
                 .ok_or_else(|| de::Error::invalid_length(i as usize, &"more actions"))?;
 
-            let action = match action {
-                (0, ms) => Action::StayFor { ms: ms as usize },
-                (1, _) => Action::TakePhoto,
-                (2, _) => Action::StartRecording,
-                (3, _) => Action::StopRecording,
-                (4, angle) => Action::RotateAircraft {
-                    angle: angle as u16,
-                },
-                (5, angle) => Action::TiltCamera {
-                    angle: angle as i16,
-                },
-
-                (code, value) => {
-                    panic!("Unknown action with code {} and value: {}", code, value)
-                }
-            };
+            let action = Action::from(action_tuple);
 
             actions.push(action);
         }
 
-        let waypoint = WaypointPartial {
-            altitude: wp_raw.altitude,
-            heading: wp_raw.heading,
-            latitude: wp_raw.latitude,
-            longitude: wp_raw.longitude,
-            curve_size: wp_raw.curve_size,
-            gimbal_pitch: wp_raw.gimbal_pitch,
-            actions,
-        };
-
-        Ok(waypoint)
+        Ok(WaypointPartial::from_raw(wp_raw, actions))
     }
 }
 
@@ -114,5 +103,26 @@ impl<'de> Deserialize<'de> for WaypointPartial {
         D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_tuple(usize::MAX, WaypointVisitor)
+    }
+}
+
+impl From<(u32, u32)> for Action {
+    fn from(tuple: (u32, u32)) -> Self {
+        match tuple {
+            (0, ms) => Action::StayFor { ms: ms as usize },
+            (1, _) => Action::TakePhoto,
+            (2, _) => Action::StartRecording,
+            (3, _) => Action::StopRecording,
+            (4, angle) => Action::RotateAircraft {
+                angle: angle as u16,
+            },
+            (5, angle) => Action::TiltCamera {
+                angle: angle as i16,
+            },
+
+            (code, value) => {
+                panic!("Unknown action with code {} and value: {}", code, value)
+            }
+        }
     }
 }
