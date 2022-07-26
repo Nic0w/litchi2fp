@@ -8,13 +8,15 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use deserializer::Deserializer;
 
-pub use self::waypoint::Waypoint;
+pub use self::mission::LitchiMission;
+pub use self::waypoint::WaypointPartial;
 
 pub use error::Error;
 
 mod deserializer;
 mod error;
 mod waypoint;
+mod mission;
 
 const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
@@ -43,36 +45,16 @@ pub struct PointOfInterest {
     pub altitude: f32,
 }
 
-#[derive(Deserialize, Debug)]
-pub struct LitchiMission {
-    _unknown: u32,
-    pub finish_action: FinishAction,
-    pub path_mode: PathMode,
-    pub cruising_speed: f32,
-    pub max_speed: f32,
-
-    _b: [u32; 4],
-
-    pub waypoints: Vec<Waypoint>,
-    pub poi: Vec<PointOfInterest>,
+#[derive(Debug)]
+pub enum PhotoInterval {
+    Time { seconds: f32 },
+    Distance { meters: f32 },
 }
 
 pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
     let mut deserializer = Deserializer::from_slice(&bytes);
 
-    let maybe_magic = deserializer.parse_u32();
-
-    /*(MAGIC == maybe_magic)
-    .then(||())
-    .ok_or(Error::BadMagic)?;*/
-
-    if MAGIC != maybe_magic {
-        return Err(Error::BadMagic);
-    }
-
-    let mission = LitchiMission::deserialize(&mut deserializer);
-
-    mission
+    LitchiMission::deserialize(&mut deserializer)
 }
 
 pub fn from_path<P: AsRef<Path>>(path: P) {}
