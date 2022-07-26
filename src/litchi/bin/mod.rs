@@ -54,19 +54,7 @@ pub enum PhotoInterval {
 pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
     let mut deserializer = Deserializer::from_slice(&bytes);
 
-    let maybe_magic = deserializer.parse_u32();
-
-    /*(MAGIC == maybe_magic)
-    .then(||())
-    .ok_or(Error::BadMagic)?;*/
-
-    if MAGIC != maybe_magic {
-        return Err(Error::BadMagic);
-    }
-
-    let mission = LitchiMission::deserialize(&mut deserializer);
-
-    mission
+    LitchiMission::deserialize(&mut deserializer)
 }
 
 pub fn from_path<P: AsRef<Path>>(path: P) {}
