@@ -29,6 +29,12 @@ CSV exports are way more suited for conversion as the information they provide a
 In particular, mission name and date of creation are missing and must be provided to `litchi2fp` (although current is used for date of creation and `litchi2fp` is able to use the file name as title for the mission).
 It is important to note that although action information is present in the CSV export, they do not exactly map 1:1 with FreeFlight's model. More tests are needed to understand the full range of differences, before devising solutions to compensate those.
 
+## Binary format conversion
+
+The binary file can be obtained by clicking the little cloud button in the Mission dialog (Missions > Open...). 
+The file's format is quite cumbersome & unintuitive to parse but once decoded, it is a close match to FreeFlight's FlightPlan data model.
+Like CSV, the file name can be used as Mission name : Litchi's Mission Hub names the file after the mission's name.
+
 # Usage
 
 ```bash
