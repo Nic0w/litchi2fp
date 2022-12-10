@@ -9,8 +9,6 @@ use super::{Action, FlightPlan, PointOfInterest, Waypoint};
 
 use crate::litchi::csv::de::Altitude;
 
-use crate::litchi::Action as LitchiAction;
-
 type PoiKey = (u64, u64);
 
 impl<'a, 'f> TryFrom<&'a [MissionRecord]> for FlightPlan<'f> {
@@ -116,7 +114,6 @@ impl<'a> From<&'a MissionRecord> for Option<PointOfInterest> {
 impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
     fn from(rec: &'a MissionRecord) -> Self {
         use Altitude::*;
-        use LitchiAction::*;
 
         let actions: Vec<Action> = rec.actions.iter().map(Action::from).collect();
 

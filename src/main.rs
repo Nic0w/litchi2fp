@@ -1,4 +1,4 @@
-use std::io::{BufRead, Read};
+use std::io::Read;
 use std::{ffi::OsStr, fs};
 use std::{path::Path, vec};
 

@@ -30,6 +30,7 @@ pub struct LitchiMissionPartial {
     poi: Vec<PointOfInterest>,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct OtherSettings {
     __u32_1: u32,
@@ -40,6 +41,7 @@ struct OtherSettings {
     photo_capture_interval_meters: f32,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct WaypointDetails {
     is_above_ground: u16,
@@ -47,7 +49,7 @@ struct WaypointDetails {
     waypoint_poi: u32
 }
 
-
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct PoIDetails {
     is_above_ground: u16,

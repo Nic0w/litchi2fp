@@ -1,4 +1,4 @@
-use crate::litchi::bin::{LitchiMission, PointOfInterest, WaypointPartial};
+use crate::litchi::bin::{LitchiMission, PointOfInterest};
 
 use super::{Action, FlightPlan};
 

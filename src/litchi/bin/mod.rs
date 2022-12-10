@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use serde::{
-    de::{self, Visitor},
     Deserialize,
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
