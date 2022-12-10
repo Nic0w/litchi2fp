@@ -11,9 +11,9 @@ strip = true
 
 [dependencies]
 chrono = "0.4.23"
-clap = { version = "3.2.23", features = ["derive"] }
+clap = { version = "4.0.29", features = ["derive"] }
 csv = "1.1.6"
-kml = "0.4.3"
+kml = "0.6.0"
 libmtp-rs = "0.7.7"
 regex = "1.7.0"
 serde = { version = "1.0.149", features = ["derive"] }

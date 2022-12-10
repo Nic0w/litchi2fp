@@ -16,12 +16,11 @@ impl<'de> Deserializer<'de> {
 }
 
 impl<'de> Deserializer<'de> {
-
     fn parse_u16(&mut self) -> u16 {
         let (bytes, remaining) = self.input.split_at(core::mem::size_of::<u16>());
-    
+
         let value = u16::from_be_bytes(bytes.try_into().unwrap());
-    
+
         self.input = remaining;
 
         value
@@ -76,9 +75,9 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     }
 
     fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-        where
-            V: Visitor<'de> {
-
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_u16(self.parse_u16())
     }
 

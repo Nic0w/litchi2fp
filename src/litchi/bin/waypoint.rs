@@ -3,7 +3,7 @@ use serde::{
     Deserialize,
 };
 
-use crate::litchi::{Action, csv::GimbalSettings};
+use crate::litchi::{csv::GimbalSettings, Action};
 
 use super::PhotoInterval;
 
@@ -62,7 +62,7 @@ pub struct Waypoint {
 
     pub interval: Option<PhotoInterval>,
 
-    pub actions: Vec<Action>
+    pub actions: Vec<Action>,
 }
 
 impl GimbalSettings {
@@ -70,11 +70,11 @@ impl GimbalSettings {
         match mode {
             0x0 => None,
 
-            0x1 => Some(GimbalSettings::FocusPoi(angle as f64)), 
+            0x1 => Some(GimbalSettings::FocusPoi(angle as f64)),
 
-            0x2 => Some(GimbalSettings::Interpolate(angle as f64)), 
+            0x2 => Some(GimbalSettings::Interpolate(angle as f64)),
 
-            _ => panic!("unknown gimbal settings")
+            _ => panic!("unknown gimbal settings"),
         }
     }
 }
