@@ -156,7 +156,10 @@ pub fn store_flightplan_at(
     dest_folder_id: u32,
     flightplan: &FlightPlan,
 ) -> Result<(), Error> {
-    let modification_date = chrono::Utc.timestamp_millis(flightplan.date as i64);
+    let modification_date = chrono::Utc
+        .timestamp_millis_opt(flightplan.date as i64)
+        .single()
+        .unwrap_or_default();
 
     let mut buffer: Vec<u8> = flightplan.into();
 

@@ -2,7 +2,8 @@ use std::io::Read;
 use std::{ffi::OsStr, fs};
 use std::{path::Path, vec};
 
-use clap::{ErrorKind, IntoApp, Parser, Subcommand};
+use clap::error::ErrorKind;
+use clap::{CommandFactory, Parser, Subcommand};
 use flightplan::FlightPlan;
 use kml::KmlReader;
 
@@ -61,7 +62,7 @@ fn main() -> Result<(), Error> {
 
     let output = match &args.command {
         FromKml { file: None, .. } | FromCsv { file: None, .. } | FromBin { file: None, .. } => {
-            CommandLineInterface::into_app()
+            CommandLineInterface::command()
                 .error(ErrorKind::MissingRequiredArgument, "FILE is required")
                 .exit()
         }
@@ -99,7 +100,7 @@ fn from_csv<'f, P: AsRef<Path> + 'f>(
     let stem = path.as_ref().file_stem().and_then(OsStr::to_str);
 
     let title = title.as_deref().or(stem).unwrap_or_else(|| {
-        CommandLineInterface::into_app()
+        CommandLineInterface::command()
             .error(ErrorKind::MissingRequiredArgument, "a title is required")
             .exit()
     });
@@ -131,7 +132,7 @@ fn from_bin<'f, P: AsRef<Path> + 'f>(
     let stem = path.as_ref().file_stem().and_then(OsStr::to_str);
 
     let title = title.or(stem).unwrap_or_else(|| {
-        CommandLineInterface::into_app()
+        CommandLineInterface::command()
             .error(ErrorKind::MissingRequiredArgument, "a title is required")
             .exit()
     });

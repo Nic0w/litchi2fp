@@ -1,8 +1,6 @@
 use std::path::Path;
 
-use serde::{
-    Deserialize,
-};
+use serde::Deserialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use deserializer::Deserializer;
@@ -14,8 +12,8 @@ pub use error::Error;
 
 mod deserializer;
 mod error;
-mod waypoint;
 mod mission;
+mod waypoint;
 
 const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
