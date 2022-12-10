@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use serde::Deserialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -53,5 +51,3 @@ pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
 
     LitchiMission::deserialize(&mut deserializer)
 }
-
-pub fn from_path<P: AsRef<Path>>(path: P) {}
