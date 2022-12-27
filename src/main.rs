@@ -29,13 +29,13 @@ struct CommandLineInterface {
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// To convert a KML file
-    FromKml {
+    Kml {
         /// Input file
         file: Option<String>,
     },
 
     /// To convert a CSV file
-    FromCsv {
+    Csv {
         /// Input file
         file: Option<String>,
 
@@ -45,7 +45,7 @@ enum Commands {
     },
 
     /// To convert a bin file
-    FromBin {
+    Bin {
         /// Input file
         file: Option<String>,
 
@@ -61,23 +61,23 @@ fn main() -> Result<(), Error> {
     use Commands::*;
 
     let output = match &args.command {
-        FromKml { file: None, .. } | FromCsv { file: None, .. } | FromBin { file: None, .. } => {
+        Kml { file: None, .. } | Csv { file: None, .. } | Bin { file: None, .. } => {
             CommandLineInterface::command()
                 .error(ErrorKind::MissingRequiredArgument, "FILE is required")
                 .exit()
         }
 
-        FromCsv {
+        Csv {
             file: Some(path),
             title,
         } => from_csv(path, title.as_deref()),
 
-        FromBin {
+        Bin {
             file: Some(path),
             title,
         } => from_bin(path, title.as_deref()),
 
-        FromKml { file: Some(path) } => from_kml(path),
+        Kml { file: Some(path) } => from_kml(path),
     }?;
 
     if args.store {
@@ -99,7 +99,7 @@ fn from_csv<'f, P: AsRef<Path> + 'f>(
 
     let stem = path.as_ref().file_stem().and_then(OsStr::to_str);
 
-    let title = title.as_deref().or(stem).unwrap_or_else(|| {
+    let title = title.or(stem).unwrap_or_else(|| {
         CommandLineInterface::command()
             .error(ErrorKind::MissingRequiredArgument, "a title is required")
             .exit()

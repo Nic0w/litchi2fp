@@ -15,7 +15,7 @@ mod waypoint;
 
 const MAGIC: u32 = 0x6C_63_68_6D; //b"lchm"
 
-#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Eq, Debug)]
 #[repr(u32)]
 pub enum FinishAction {
     None = 0,
@@ -25,7 +25,7 @@ pub enum FinishAction {
     Reverse = 4,
 }
 
-#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Eq, Debug)]
 #[repr(u32)]
 pub enum PathMode {
     StraigtLines = 0,
@@ -47,7 +47,7 @@ pub enum PhotoInterval {
 }
 
 pub fn from_slice(bytes: &[u8]) -> Result<LitchiMission, Error> {
-    let mut deserializer = Deserializer::from_slice(&bytes);
+    let mut deserializer = Deserializer::from_slice(bytes);
 
     LitchiMission::deserialize(&mut deserializer)
 }

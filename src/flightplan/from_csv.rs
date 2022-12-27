@@ -111,7 +111,7 @@ impl<'a> From<&'a MissionRecord> for Option<PointOfInterest> {
     }
 }
 
-impl<'a, 'w> From<&'a MissionRecord> for Waypoint {
+impl<'a> From<&'a MissionRecord> for Waypoint {
     fn from(rec: &'a MissionRecord) -> Self {
         use Altitude::*;
 

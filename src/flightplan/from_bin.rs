@@ -2,7 +2,7 @@ use crate::litchi::bin::{LitchiMission, PointOfInterest};
 
 use super::{Action, FlightPlan};
 
-impl<'m, 'f> TryFrom<&'_ LitchiMission> for FlightPlan<'f> {
+impl<'f> TryFrom<&'_ LitchiMission> for FlightPlan<'f> {
     type Error = crate::error::Error;
 
     fn try_from(mission: &'_ LitchiMission) -> Result<Self, Self::Error> {

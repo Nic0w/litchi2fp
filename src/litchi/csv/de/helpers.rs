@@ -8,16 +8,19 @@ pub struct ActionHelper {
     pub action_param: Option<isize>,
 }
 
+#[derive(Default)]
 pub struct GimbalModeHelper {
     pub mode: Option<u8>,
     pub pitch_angle: Option<f64>,
 }
 
+#[derive(Default)]
 pub struct AltitudeHelper {
     pub mode: Option<u8>,
     pub height: Option<u16>,
 }
 
+#[derive(Default)]
 pub struct CoordinatesHelper {
     pub latitude: Option<f64>,
     pub longitude: Option<f64>,
@@ -28,15 +31,6 @@ pub struct CoordinatesHelper {
 pub enum ComposedFieldError {
     MissingParameter,
     UnknownType,
-}
-
-impl Default for AltitudeHelper {
-    fn default() -> Self {
-        Self {
-            mode: None,
-            height: None,
-        }
-    }
 }
 
 impl TryFrom<AltitudeHelper> for Altitude {
@@ -58,16 +52,6 @@ impl TryFrom<AltitudeHelper> for Altitude {
     }
 }
 
-impl Default for CoordinatesHelper {
-    fn default() -> Self {
-        Self {
-            latitude: None,
-            longitude: None,
-            altitude: AltitudeHelper::default(),
-        }
-    }
-}
-
 impl TryFrom<CoordinatesHelper> for Coordinates {
     type Error = ComposedFieldError;
 
@@ -85,15 +69,6 @@ impl TryFrom<CoordinatesHelper> for Coordinates {
             longitude,
             altitude,
         })
-    }
-}
-
-impl Default for GimbalModeHelper {
-    fn default() -> Self {
-        Self {
-            mode: None,
-            pitch_angle: None,
-        }
     }
 }
 

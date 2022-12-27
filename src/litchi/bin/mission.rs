@@ -126,7 +126,7 @@ impl<'de> Visitor<'de> for MissionVisitor {
             .map(|((waypoint, details), intervals)| {
                 let interval = PhotoInterval::from_tuple(intervals);
 
-                let poi = (details.waypoint_poi != 0xFFFFFFFF).then(|| details.waypoint_poi);
+                let poi = (details.waypoint_poi != 0xFFFFFFFF).then_some(details.waypoint_poi);
 
                 Waypoint {
                     altitude: waypoint.altitude,

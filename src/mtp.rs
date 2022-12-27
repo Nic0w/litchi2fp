@@ -75,13 +75,7 @@ fn find_raw_device(device_id: Option<&str>) -> Result<RawDevice, MtpError> {
 }
 
 fn find_folder_by_name<'a, 'f>(name: &'_ str, files: &'f [File<'a>]) -> Option<&'f File<'a>> {
-    for file in files {
-        if file.name() == name {
-            return Some(file);
-        }
-    }
-
-    None
+    files.iter().find(|&file| file.name() == name)
 }
 
 pub fn find_device(device: Option<&str>) -> Result<MtpDevice, Error> {
